@@ -12,7 +12,7 @@
 </head>
 <body>
 <nav class="navbar"><div class="navbar-inner">
-<a href="../index.html" class="navbar-logo"><img src="../images/LOGO227x200.png" alt="ブルースター株式会社 BLUESTAR" height="32" style="height:32px;width:auto;"></a>
+<a href="../index.html" class="navbar-logo"><img src="../images/LOGO227x200.png" alt="BLUESTAR" height="36" style="height:36px;width:auto;"><span class="logo-text">BLUESTAR</span></a>
 <div class="nav-toggle" role="button" aria-label="切换菜单" tabindex="0"><span></span><span></span><span></span></div>
 <div class="navbar-links">
 <a href="../index.html">首页</a><a href="../services/index.html">服务</a><a href="../about/index.html">关于我们</a><a href="../cases/index.html">案例</a><a href="../careers/index.html">岗位</a><a href="index.html" class="active">联系我们</a><a href="../ja/index.html" class="lang-switch">🇯🇵 日本語</a>
@@ -29,7 +29,7 @@
   <div class="container">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;">
       <div>
-        <div class="contact-form">
+        <div class="contact-form" id="contactForm" data-email="info@bl-star.cloud">
           <div class="form-group">
             <label for="name">姓名 *</label>
             <input type="text" id="name" name="name" placeholder="您的姓名" required>
@@ -61,8 +61,7 @@
             <label for="message">项目描述</label>
             <textarea id="message" name="message" placeholder="请简要描述您的需求：项目规模、时间要求、SLA要求等"></textarea>
           </div>
-          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">提交咨询 <span style="font-size:0.75rem;opacity:0.7;">（将打开邮件客户端）</span></button>
-          <p style="font-size:0.75rem;color:var(--gray-400);margin-top:8px;">※ 表单通过邮件客户端发送。填写后点击提交，确认邮件内容后发送即可。</p>
+          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">提交咨询</button>
         </div>
       </div>
       <div>

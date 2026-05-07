@@ -12,7 +12,7 @@
 </head>
 <body>
 <nav class="navbar"><div class="navbar-inner">
-<a href="../index.html" class="navbar-logo"><img src="../../images/LOGO227x200.png" alt="ブルースター株式会社 BLUESTAR" height="32" style="height:32px;width:auto;"></a>
+<a href="../index.html" class="navbar-logo"><img src="../../images/LOGO227x200.png" alt="BLUESTAR" height="36" style="height:36px;width:auto;"><span class="logo-text">BLUESTAR</span></a>
 <div class="nav-toggle" role="button" aria-label="メニュー切替" tabindex="0"><span></span><span></span><span></span></div>
 <div class="navbar-links">
 <a href="../index.html">ホーム</a><a href="../services/index.html">サービス</a><a href="../about/index.html">会社概要</a><a href="../cases/index.html">事例</a><a href="../careers/index.html">採用情報</a><a href="index.html" class="active">お問い合わせ</a><a href="../../index.html" class="lang-switch">🇨🇳 中文</a>
@@ -29,7 +29,7 @@
   <div class="container">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;">
       <div>
-        <div class="contact-form">
+        <div class="contact-form" id="contactForm" data-email="idc_info@bl-star.co.jp">
           <div class="form-group">
             <label for="name">お名前 *</label>
             <input type="text" id="name" name="name" placeholder="お名前" required>
@@ -61,8 +61,7 @@
             <label for="message">プロジェクト概要</label>
             <textarea id="message" name="message" placeholder="ご要望の概要：規模、スケジュール、SLA要件など"></textarea>
           </div>
-          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">送信 <span style="font-size:0.75rem;opacity:0.7;">（メールクライアントが起動します）</span></button>
-          <p style="font-size:0.75rem;color:var(--gray-400);margin-top:8px;">※ フォームはメールクライアント経由で送信されます。ご入力後「送信」をクリックし、メール内容をご確認の上お送りください。</p>
+          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">送信する</button>
         </div>
       </div>
       <div>
