@@ -22,7 +22,7 @@
   --success: #059669;
   --warning: #d97706;
   --danger: #dc2626;
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-sans: 'Inter', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
   --max-width: 1200px;
   --radius: 8px;
@@ -439,6 +439,26 @@ section { padding: 80px 0; }
 }
 @media (max-width: 768px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 480px) { .footer-grid { grid-template-columns: 1fr; } }
+
+/* ===== Form Success Feedback ===== */
+.form-success {
+  display: none; padding: 24px; background: #d1fae5; border: 1px solid #a7f3d0;
+  border-radius: var(--radius-lg); text-align: center; margin-bottom: 20px;
+}
+.form-success.show { display: block; }
+.form-success .icon { font-size: 2.5rem; margin-bottom: 8px; }
+.form-success h4 { color: #065f46; margin-bottom: 4px; font-size: 1.1rem; }
+.form-success p { color: #047857; font-size: 0.9rem; }
+
+/* ===== Apply Button ===== */
+.apply-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 16px; padding: 10px 22px; border-radius: var(--radius);
+  font-size: 0.9rem; font-weight: 600; cursor: pointer;
+  transition: all 0.2s; border: 1.5px solid var(--accent);
+  background: var(--white); color: var(--accent);
+}
+.apply-btn:hover { background: var(--accent); color: var(--white); }
 
 /* ===== CTA Section ===== */
 .cta-section {

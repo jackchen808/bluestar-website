@@ -4,13 +4,6 @@
  *  BlueStar Co.,Ltd. - お問い合わせフォーム 送信API
  * ================================================
  *
- * 【重要】このファイルは開発用テンプレートです。
- * 本番環境では適切なセキュリティ対策を施してからご利用ください。
- *
- * ================================================
- *  送信設定
- * ================================================
- *
  *  SMTPサーバー: smtp.lolipop.jp:465 (SSL)
  *  送信元アドレス: info@bl-star.cloud
  *  送信先アドレス: idc_info@bl-star.co.jp
@@ -33,7 +26,7 @@
  *  });
  *
  * ================================================
- *  CORS 設定（必要に応じて調整）
+ *  CORS 設定
  * ================================================
  */
 
@@ -42,7 +35,7 @@ header('Access-Control-Allow-Origin: https://www.bl-star.co.jp');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
-// Preflight 対応
+// Preflight
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(204);
     exit;
@@ -61,9 +54,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $config = [
     'smtp_host' => 'smtp.lolipop.jp',
     'smtp_port' => 465,
-    'smtp_user' => 'info@bl-star.cloud',
-    'smtp_pass' => getenv('SMTP_PASSWORD'), // 環境変数から取得
-    'from'      => 'info@bl-star.cloud',
+    'smtp_user' => 'idc_info@bl-star.co.jp',
+    'smtp_pass' => 'Imku1324Imku1324_',
+    'from'      => 'idc_info@bl-star.co.jp',
     'from_name' => 'ブルースター株式会社',
     'to'        => 'idc_info@bl-star.co.jp',
     'to_name'   => 'お問い合わせ担当',
@@ -103,47 +96,59 @@ if (!empty($errors)) {
 }
 
 // ================================================
-//  メール送信 (PHPMailer推奨)
+//  メール送信 (PHPMailer)
 // ================================================
 
-// 注意: 以下のコードはPHPMailerを使用した例です。
-// composer require phpmailer/phpmailer でインストールしてください。
-
-/*
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require_once __DIR__ . '/../vendor/autoload.php';
+// Try to load PHPMailer from various possible paths
+$possiblePaths = [
+    __DIR__ . '/../vendor/autoload.php',
+    __DIR__ . '/../../vendor/autoload.php',
+    __DIR__ . '/../../../vendor/autoload.php',
+];
 
-$mail = new PHPMailer(true);
-
-try {
-    $mail->isSMTP();
-    $mail->Host       = $config['smtp_host'];
-    $mail->SMTPAuth   = true;
-    $mail->Username   = $config['smtp_user'];
-    $mail->Password   = $config['smtp_pass'];
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-    $mail->Port       = $config['smtp_port'];
-    $mail->CharSet    = 'UTF-8';
-
-    $mail->setFrom($config['from'], $config['from_name']);
-    $mail->addAddress($config['to'], $config['to_name']);
-    $mail->addReplyTo($email, $name);
-
-    if (!empty($config['bcc'])) {
-        $mail->addBCC($config['bcc']);
+$phpmailerLoaded = false;
+foreach ($possiblePaths as $path) {
+    if (file_exists($path)) {
+        require_once $path;
+        $phpmailerLoaded = true;
+        break;
     }
+}
 
-    $serviceLabels = [
-        'infrastructure' => 'IDCインフラ構築',
-        'delivery'       => 'サーバー導入',
-        'operations'     => '運用保守',
-        'fullcycle'      => 'フルライフサイクル',
-        'other'          => 'その他',
-    ];
+if ($phpmailerLoaded) {
+    // PHPMailer is available - send real email
+    try {
+        $mail = new PHPMailer(true);
 
-    $body = <<<EOD
+        $mail->isSMTP();
+        $mail->Host       = $config['smtp_host'];
+        $mail->SMTPAuth   = true;
+        $mail->Username   = $config['smtp_user'];
+        $mail->Password   = $config['smtp_pass'];
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+        $mail->Port       = $config['smtp_port'];
+        $mail->CharSet    = 'UTF-8';
+
+        $mail->setFrom($config['from'], $config['from_name']);
+        $mail->addAddress($config['to'], $config['to_name']);
+        $mail->addReplyTo($email, $name);
+
+        if (!empty($config['bcc'])) {
+            $mail->addBCC($config['bcc']);
+        }
+
+        $serviceLabels = [
+            'infrastructure' => 'IDCインフラ構築',
+            'delivery'       => 'サーバー導入',
+            'operations'     => '運用保守',
+            'fullcycle'      => 'フルライフサイクル',
+            'other'          => 'その他',
+        ];
+
+        $body = <<<EOD
 お問い合わせがありました。
 
 ━━━━━━━━━━━━━━━━━━
@@ -160,36 +165,80 @@ try {
 
 本メールは自動送信されています。
 ブルースター株式会社
+BlueStar Co.,Ltd.
+〒169-0075 東京都新宿区高田馬場1-31-8 高田馬場ダイカンプラザ625号
+TEL: 03-6824-5796
 EOD;
 
-    $mail->isHTML(false);
-    $mail->Subject = '【お問い合わせ】' . $name . ' 様より';
-    $mail->Body    = $body;
+        $mail->isHTML(false);
+        $mail->Subject = '【お問い合わせ】' . $name . ' 様より - ' . $company;
+        $mail->Body    = $body;
 
-    $mail->send();
+        $mail->send();
 
-    echo json_encode([
-        'success' => true,
-        'message' => 'お問い合わせを受け付けました。担当者より48時間以内にご連絡いたします。'
-    ]);
+        echo json_encode([
+            'success' => true,
+            'message' => 'お問い合わせを受け付けました。担当者より48時間以内にご連絡いたします。'
+        ]);
 
-} catch (Exception $e) {
-    error_log('Mail send failed: ' . $mail->ErrorInfo);
-    http_response_code(500);
-    echo json_encode([
-        'success' => false,
-        'message' => '送信に失敗しました。お手数ですがメールにて直接お問い合わせください。'
-    ]);
+    } catch (Exception $e) {
+        error_log('Mail send failed: ' . $mail->ErrorInfo);
+        http_response_code(500);
+        echo json_encode([
+            'success' => false,
+            'message' => '送信に失敗しました。お手数ですがメールにて直接お問い合わせください。'
+        ]);
+    }
+} else {
+    // PHPMailer not installed - fallback to mail() function
+    $to = $config['to'];
+    $subject = '【お問い合わせ】' . $name . ' 様より - ' . $company;
+
+    $serviceLabels = [
+        'infrastructure' => 'IDCインフラ構築',
+        'delivery'       => 'サーバー導入',
+        'operations'     => '運用保守',
+        'fullcycle'      => 'フルライフサイクル',
+        'other'          => 'その他',
+    ];
+
+    $body = "お問い合わせがありました。\n\n";
+    $body .= "━━━━━━━━━━━━━━━━━━\n";
+    $body .= "【お名前】 {$name}\n";
+    $body .= "【会社名】 {$company}\n";
+    $body .= "【メール】 {$email}\n";
+    $body .= "【電話】   {$phone}\n";
+    $body .= "【種別】   " . ($serviceLabels[$service] ?? 'その他') . "\n";
+    $body .= "━━━━━━━━━━━━━━━━━━\n\n";
+    $body .= "【お問い合わせ内容】\n{$message}\n\n";
+    $body .= "━━━━━━━━━━━━━━━━━━\n";
+    $body .= "本メールは自動送信されています。\n";
+    $body .= "ブルースター株式会社\n";
+    $body .= "BlueStar Co.,Ltd.\n";
+    $body .= "〒169-0075 東京都新宿区高田馬場1-31-8 高田馬場ダイカンプラザ625号\n";
+    $body .= "TEL: 03-6824-5796";
+
+    $headers = 'From: ' . $config['from_name'] . ' <' . $config['from'] . '>' . "\r\n";
+    $headers .= 'Reply-To: ' . $email . "\r\n";
+    $headers .= 'BCC: ' . $config['bcc'] . "\r\n";
+    $headers .= 'MIME-Version: 1.0' . "\r\n";
+    $headers .= 'Content-Type: text/plain; charset=UTF-8' . "\r\n";
+    $headers .= 'Content-Transfer-Encoding: 8bit' . "\r\n";
+    $headers .= 'X-Mailer: PHP/' . phpversion();
+
+    $sent = mb_send_mail($to, $subject, $body, $headers);
+
+    if ($sent) {
+        echo json_encode([
+            'success' => true,
+            'message' => 'お問い合わせを受け付けました。担当者より48時間以内にご連絡いたします。'
+        ]);
+    } else {
+        error_log('Mail send failed via mail()');
+        http_response_code(500);
+        echo json_encode([
+            'success' => false,
+            'message' => '送信に失敗しました。お手数ですがメールにて直接お問い合わせください。'
+        ]);
+    }
 }
-*/
-
-// ================================================
-//  ★ 開発用ダミーレスポンス ★
-//  = 上記のPHPMailerコードを有効にしたら削除してください
-// ================================================
-
-echo json_encode([
-    'success' => true,
-    'message' => 'お問い合わせを受け付けました。担当者より48時間以内にご連絡いたします。',
-    'debug'   => '※このメッセージは開発用ダミーレスポンスです。PHPMailer設定後に本稼働してください。'
-]);
