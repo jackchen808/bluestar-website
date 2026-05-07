@@ -1,0 +1,13 @@
+# ブルースター株式会社 (BlueStar Co.,Ltd.)
+# https://www.bl-star.co.jp/
+#
+# Allow all crawlers for full site indexing
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://www.bl-star.co.jp/sitemap.xml
+
+# Disallow admin/internal paths (if any in the future)
+# Disallow: /admin/
+# Disallow: /api/

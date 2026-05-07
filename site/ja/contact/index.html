@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>お問い合わせ - BLUESTAR | データセンターサービス相談</title>
-<meta name="description" content="BLUESTARへのお問い合わせはこちら。IDCインフラ構築、サーバー導入、運用保守に関するご相談を承ります。">
-<link rel="canonical" href="https://jackchen808.github.io/bluestar-website/ja/contact/">
-<link rel="alternate" hreflang="zh-CN" href="https://jackchen808.github.io/bluestar-website/contact/">
-<link rel="alternate" hreflang="ja" href="https://jackchen808.github.io/bluestar-website/ja/contact/">
+<title>お問い合わせ - ブルースター株式会社 (BLUESTAR) | データセンターサービス相談</title>
+<meta name="description" content="ブルースター株式会社へのお問い合わせはこちら。東京本社：〒169-0075 東京都新宿区高田馬場1-31-8。TEL: 03-6824-5796。IDCインフラ構築、サーバー導入、運用保守に関するご相談を承ります。">
+<meta name="keywords" content="ブルースター株式会社,BLUESTAR,お問い合わせ,東京,新宿,高田馬場,IDC相談">
+<link rel="canonical" href="https://www.bl-star.co.jp/ja/contact/">
+<link rel="alternate" hreflang="zh-CN" href="https://www.bl-star.co.jp/contact/">
+<link rel="alternate" hreflang="ja" href="https://www.bl-star.co.jp/ja/contact/">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body>
 <nav class="navbar"><div class="navbar-inner">
-<a href="../index.html" class="navbar-logo"><span class="logo-dot"></span>BLUESTAR</a>
+<a href="../index.html" class="navbar-logo"><img src="../../images/logo.svg" alt="ブルースター株式会社 BLUESTAR" height="32" style="height:32px;width:auto;"></a>
 <div class="nav-toggle" role="button" aria-label="メニュー切替" tabindex="0"><span></span><span></span><span></span></div>
 <div class="navbar-links">
 <a href="../index.html">ホーム</a><a href="../services/index.html">サービス</a><a href="../about/index.html">会社概要</a><a href="../cases/index.html">事例</a><a href="../careers/index.html">採用情報</a><a href="index.html" class="active">お問い合わせ</a><a href="../../index.html" class="lang-switch">🇨🇳 中文</a>
@@ -60,23 +61,28 @@
             <label for="message">プロジェクト概要</label>
             <textarea id="message" name="message" placeholder="ご要望の概要：規模、スケジュール、SLA要件など"></textarea>
           </div>
-          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;" onclick="alert('お問い合わせありがとうございます。フォームはCMS接続後に有効化されます。現在はデモページです。')">送信</button>
+          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;" onclick="window.location.href='mailto:info@bl-star.cloud?subject=【お問い合わせ】BLUESTARサイトより&body='+encodeURIComponent('お名前: '+document.getElementById('name').value+'%0A会社名: '+document.getElementById('company').value+'%0Aメール: '+document.getElementById('email').value+'%0A電話: '+document.getElementById('phone').value+'%0A種別: '+document.getElementById('service').value+'%0A%0A'+document.getElementById('message').value)">送信 <span style="font-size:0.75rem;opacity:0.7;">（メールクライアントが起動します）</span></button>
+          <p style="font-size:0.75rem;color:var(--gray-400);margin-top:8px;">※ フォームはメールクライアント経由で送信されます。CMS連携による完全版は別途お問い合わせください。</p>
         </div>
       </div>
       <div>
         <div style="background:var(--gray-50);padding:36px;border-radius:12px;border:1px solid var(--gray-200);">
           <h3 style="margin-bottom:20px;">連絡先</h3>
           <div style="margin-bottom:20px;">
-            <div style="font-weight:600;margin-bottom:4px;">📍 東京オフィス</div>
-            <p style="color:var(--gray-500);font-size:0.9rem;">東京都（詳細はお問い合わせください）</p>
+            <div style="font-weight:600;margin-bottom:4px;">📍 東京本社</div>
+            <p style="color:var(--gray-600);font-size:0.9rem;">〒169-0075<br>東京都新宿区高田馬場1-31-8<br>高田馬場ダイカンプラザ625号</p>
+          </div>
+          <div style="margin-bottom:20px;">
+            <div style="font-weight:600;margin-bottom:4px;">📞 電話</div>
+            <p style="color:var(--gray-600);font-size:0.9rem;">03-6824-5796</p>
           </div>
           <div style="margin-bottom:20px;">
             <div style="font-weight:600;margin-bottom:4px;">📧 メール</div>
-            <p style="color:var(--gray-500);font-size:0.9rem;">contact@bluestar.com</p>
+            <p style="color:var(--gray-600);font-size:0.9rem;">info@bl-star.cloud（一般）<br>idc_info@bl-star.co.jp（IDC業務専用）</p>
           </div>
           <div>
             <div style="font-weight:600;margin-bottom:4px;">🌏 サービスエリア</div>
-            <p style="color:var(--gray-500);font-size:0.9rem;">中国主要DCクラスター<br>日本（東京オフィス）</p>
+            <p style="color:var(--gray-500);font-size:0.9rem;">東京本社 / 中国主要DCクラスター<br>日本全国対応可能</p>
           </div>
         </div>
       </div>
@@ -92,11 +98,14 @@
 
 <footer class="footer"><div class="container">
 <div class="footer-grid">
-<div class="footer-brand"><div class="logo">BLUESTAR</div><p>DCインフラフルライフサイクルサービス。</p></div>
+<div class="footer-brand"><div class="logo"><img src="../../images/logo.svg" alt="ブルースター株式会社 BLUESTAR" height="28" style="height:28px;width:auto;"></div><p>ブルースター株式会社 (BlueStar Co.,Ltd.)<br>DCインフラフルライフサイクルサービス。</p></div>
 <div class="footer-col"><h5>会社情報</h5><a href="../about/index.html">会社概要</a><a href="../careers/index.html">採用情報</a><a href="index.html">お問い合わせ</a></div>
 <div class="footer-col"><h5>言語</h5><a href="../../index.html">中文</a><a href="../index.html">日本語</a></div>
 </div>
-<div class="footer-bottom"><span>&copy; 2025-2026 BLUESTAR.</span></div>
+<div class="footer-bottom">
+  <span>&copy; 2009-2026 ブルースター株式会社 (BlueStar Co.,Ltd.) All rights reserved.</span>
+  <span style="color:var(--gray-500);font-size:0.75rem;">〒169-0075 東京都新宿区高田馬場1-31-8 高田馬場ダイカンプラザ625号</span>
+</div>
 </div></footer>
 <script src="../../js/main.js"></script>
 </body>

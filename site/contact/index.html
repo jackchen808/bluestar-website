@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>联系我们 - BLUESTAR | 数据中心基础设施服务咨询</title>
-<meta name="description" content="联系我们获取BLUESTAR数据中心基础设施服务方案评估。服务覆盖IDC基建、服务器上架交付、7×24运维管理。">
-<link rel="canonical" href="https://jackchen808.github.io/bluestar-website/contact/">
-<link rel="alternate" hreflang="zh-CN" href="https://jackchen808.github.io/bluestar-website/contact/">
-<link rel="alternate" hreflang="ja" href="https://jackchen808.github.io/bluestar-website/ja/contact/">
+<title>联系我们 - ブルースター株式会社 (BLUESTAR) | 数据中心基础设施服务咨询</title>
+<meta name="description" content="ブルースター株式会社 (BLUESTAR) 东京本社：〒169-0075 東京都新宿区高田馬場1-31-8。TEL: 03-6824-5796。数据中心基础设施服务方案评估，覆盖IDC基建、服务器上架交付、7×24运维管理。">
+<meta name="keywords" content="ブルースター株式会社,BLUESTAR,联系我们,东京,新宿,高田馬場,IDC咨询,数据中心服务">
+<link rel="canonical" href="https://www.bl-star.co.jp/contact/">
+<link rel="alternate" hreflang="zh-CN" href="https://www.bl-star.co.jp/contact/">
+<link rel="alternate" hreflang="ja" href="https://www.bl-star.co.jp/ja/contact/">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
 <nav class="navbar"><div class="navbar-inner">
-<a href="../index.html" class="navbar-logo"><span class="logo-dot"></span>BLUESTAR</a>
+<a href="../index.html" class="navbar-logo"><img src="../images/logo.svg" alt="ブルースター株式会社 BLUESTAR" height="32" style="height:32px;width:auto;"></a>
 <div class="nav-toggle" role="button" aria-label="切换菜单" tabindex="0"><span></span><span></span><span></span></div>
 <div class="navbar-links">
 <a href="../index.html">首页</a><a href="../services/index.html">服务</a><a href="../about/index.html">关于我们</a><a href="../cases/index.html">案例</a><a href="../careers/index.html">岗位</a><a href="index.html" class="active">联系我们</a><a href="../ja/index.html" class="lang-switch">🇯🇵 日本語</a>
@@ -28,7 +29,7 @@
   <div class="container">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;">
       <div>
-        <div class="contact-form">
+        <div class="contact-form" action="mailto:info@bl-star.cloud" method="post" enctype="text/plain">
           <div class="form-group">
             <label for="name">姓名 *</label>
             <input type="text" id="name" name="name" placeholder="您的姓名" required>
@@ -60,27 +61,28 @@
             <label for="message">项目描述</label>
             <textarea id="message" name="message" placeholder="请简要描述您的需求：项目规模、时间要求、SLA要求等"></textarea>
           </div>
-          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;" onclick="alert('感谢您的咨询！表单功能连接CMS后可启用。当前为Demo页面。')">提交咨询</button>
+          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;" onclick="window.location.href='mailto:info@bl-star.cloud?subject=【お問い合わせ】BLUESTARサイトより&body='+encodeURIComponent('名前: '+document.getElementById('name').value+'%0A会社名: '+document.getElementById('company').value+'%0Aメール: '+document.getElementById('email').value+'%0A電話: '+document.getElementById('phone').value+'%0A種別: '+document.getElementById('service').value+'%0A%0A'+document.getElementById('message').value)">提交咨询 <span style="font-size:0.75rem;opacity:0.7;">（将打开邮件客户端）</span></button>
+          <p style="font-size:0.75rem;color:var(--gray-400);margin-top:8px;">※ 表单通过邮件客户端发送。如需完整CMS表单系统，请联系我们。</p>
         </div>
       </div>
       <div>
         <div style="background:var(--gray-50);padding:36px;border-radius:12px;border:1px solid var(--gray-200);">
           <h3 style="margin-bottom:20px;">联系方式</h3>
           <div style="margin-bottom:20px;">
-            <div style="font-weight:600;margin-bottom:4px;">📍 上海总部</div>
-            <p style="color:var(--gray-500);font-size:0.9rem;">上海市浦东新区（具体地址请联系获取）</p>
-          </div>
-          <div style="margin-bottom:20px;">
-            <div style="font-weight:600;margin-bottom:4px;">📧 邮箱</div>
-            <p style="color:var(--gray-500);font-size:0.9rem;">contact@bluestar.com</p>
+            <div style="font-weight:600;margin-bottom:4px;">📍 東京本社</div>
+            <p style="color:var(--gray-600);font-size:0.9rem;">〒169-0075<br>東京都新宿区高田馬場1-31-8<br>高田馬場ダイカンプラザ625号</p>
           </div>
           <div style="margin-bottom:20px;">
             <div style="font-weight:600;margin-bottom:4px;">📞 电话</div>
-            <p style="color:var(--gray-500);font-size:0.9rem;">请在表单中留下联系方式，我们将回电</p>
+            <p style="color:var(--gray-600);font-size:0.9rem;">03-6824-5796</p>
+          </div>
+          <div style="margin-bottom:20px;">
+            <div style="font-weight:600;margin-bottom:4px;">📧 邮箱</div>
+            <p style="color:var(--gray-600);font-size:0.9rem;">info@bl-star.cloud（一般咨询）<br>idc_info@bl-star.co.jp（IDC业务专用）</p>
           </div>
           <div>
             <div style="font-weight:600;margin-bottom:4px;">🌏 服务区域</div>
-            <p style="color:var(--gray-500);font-size:0.9rem;">全国主要数据中心集群覆盖<br>日本东京办事处（日语服务可）</p>
+            <p style="color:var(--gray-500);font-size:0.9rem;">东京本社 / 中国主要数据中心集群<br>日本全国対応可能</p>
           </div>
         </div>
       </div>
@@ -97,11 +99,14 @@
 
 <footer class="footer"><div class="container">
 <div class="footer-grid">
-<div class="footer-brand"><div class="logo">BLUESTAR</div><p>数据中心基础设施全生命周期服务商。</p></div>
+<div class="footer-brand"><div class="logo"><img src="../images/logo.svg" alt="ブルースター株式会社 BLUESTAR" height="28" style="height:28px;width:auto;"></div><p>ブルースター株式会社 (BlueStar Co.,Ltd.)<br>数据中心基础设施全生命周期服务商。</p></div>
 <div class="footer-col"><h5>公司</h5><a href="../about/index.html">关于我们</a><a href="../careers/index.html">加入我们</a><a href="index.html">联系我们</a></div>
 <div class="footer-col"><h5>语言</h5><a href="../index.html">中文</a><a href="../ja/index.html">日本語</a></div>
 </div>
-<div class="footer-bottom"><span>&copy; 2025-2026 BLUESTAR.</span></div>
+<div class="footer-bottom">
+  <span>&copy; 2009-2026 ブルースター株式会社 (BlueStar Co.,Ltd.) All rights reserved.</span>
+  <span style="color:var(--gray-500);font-size:0.75rem;">〒169-0075 東京都新宿区高田馬場1-31-8 高田馬場ダイカンプラザ625号</span>
+</div>
 </div></footer>
 <script src="../js/main.js"></script>
 </body>
