@@ -73,9 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // === Mailto Helper Function ===
   window.sendMailto = function(to, subject, body) {
-    var mailtoLink = 'mailto:' + encodeURIComponent(to) +
-      '?subject=' + encodeURIComponent(subject) +
-      '&body=' + encodeURIComponent(body);
+    var mailtoLink = 'mailto:' + to + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
     window.location.href = mailtoLink;
   };
 
