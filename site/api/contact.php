@@ -1,9 +1,9 @@
-PhpMailerAutoload: disabled
-純PHP SMTP実装 - smtp.lolipop.jp:465 でSSL接続
-認証方式: AUTH LOGIN
-アカウント: idc_info@bl-star.co.jp
-
 <?php
+/**
+ * BLUESTAR Contact Form - PHP SMTP Sender
+ * Connects to smtp.lolipop.jp:465 via SSL.
+ * AUTH LOGIN with idc_info@bl-star.co.jp
+ */
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
@@ -21,7 +21,7 @@ $email   = trim($input['email'] ?? '');
 $phone   = trim($input['phone'] ?? '');
 $service = trim($input['service'] ?? '');
 $message = trim($input['message'] ?? '');
-$type    = trim($input['type'] ?? 'inquiry'); // 'inquiry' or 'apply'
+$type    = trim($input['type'] ?? 'inquiry');
 $to_email = trim($input['to_email'] ?? 'info@bl-star.cloud');
 
 if (!$name || !$email || !$message) {
@@ -50,24 +50,24 @@ $body .= "ブルースター株式会社 (BlueStar Co.,Ltd.)\n";
 $body .= "〒169-0075 東京都新宿区高田馬場1-31-8\n";
 $body .= "TEL: 03-6824-5796\n";
 
-// --- SMTP Send via fsockopen/stream_socket_client ---
-$smtp_host = 'smtp.lolipop.jp';
-$smtp_port = 465;
-$smtp_user = 'idc_info@bl-star.co.jp';
-$smtp_pass = 'Imku1324Imku1324_';
-$from_addr = 'idc_info@bl-star.co.jp';
-$from_name = 'BLUESTAR 官网';
-$bcc_addr = ($to_email === 'idc_info@bl-star.co.jp') ? 'info@bl-star.cloud' : 'idc_info@bl-star.co.jp';
+// === SMTP Configuration ===
+define('SMTP_HOST', 'smtp.lolipop.jp');
+define('SMTP_PORT', 465);
+define('SMTP_USER', 'idc_info@bl-star.co.jp');
+define('SMTP_PASS', 'Imku1324Imku1324_');
+define('FROM_ADDR', 'idc_info@bl-star.co.jp');
+define('FROM_NAME', 'BLUESTAR 官网');
 
+$bcc_addr = ($to_email === 'idc_info@bl-star.co.jp') ? 'info@bl-star.cloud' : 'idc_info@bl-star.co.jp';
 $recipients = [$to_email];
 if ($bcc_addr) $recipients[] = $bcc_addr;
 
 function smtp_cmd($socket, $cmd, $expected) {
     fwrite($socket, $cmd . "\r\n");
     $resp = '';
-    while ($line = fgets($socket, 512)) {
+    while (!feof($socket) && ($line = fgets($socket, 512))) {
         $resp .= $line;
-        if (substr($line, 3, 1) === ' ') break;
+        if (isset($line[3]) && $line[3] === ' ') break;
     }
     return $resp;
 }
@@ -77,37 +77,42 @@ $error_msg = '';
 
 try {
     $context = stream_context_create(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false]]);
-    $socket = @stream_socket_client('ssl://' . $smtp_host . ':' . $smtp_port, $errno, $errstr, 30, STREAM_CLIENT_CONNECT, $context);
+    $socket = @stream_socket_client(
+        'ssl://' . SMTP_HOST . ':' . SMTP_PORT,
+        $errno, $errstr, 30, STREAM_CLIENT_CONNECT, $context
+    );
     if (!$socket) throw new Exception("SMTP connection failed: $errstr ($errno)");
 
-    // Read greeting
+    // Greeting
     fgets($socket, 512);
 
     // EHLO
-    smtp_cmd($socket, 'EHLO bl-star.co.jp', 250);
+    $ehlo_resp = smtp_cmd($socket, 'EHLO bl-star.co.jp', 250);
 
-    // STARTTLS (already on SSL, skip)
     // AUTH LOGIN
     smtp_cmd($socket, 'AUTH LOGIN', 334);
-    smtp_cmd($socket, base64_encode($smtp_user), 334);
-    smtp_cmd($socket, base64_encode($smtp_pass), 235);
+    smtp_cmd($socket, base64_encode(SMTP_USER), 334);
+    $auth_resp = smtp_cmd($socket, base64_encode(SMTP_PASS), 235);
 
     // MAIL FROM
-    smtp_cmd($socket, "MAIL FROM:<$from_addr>", 250);
+    smtp_cmd($socket, 'MAIL FROM:<' . FROM_ADDR . '>', 250);
 
-    // RCPT TO (each recipient)
+    // RCPT TO
     foreach ($recipients as $r) {
         $r = trim($r);
-        if (!empty($r)) smtp_cmd($socket, "RCPT TO:<$r>", 250);
+        if (!empty($r)) {
+            $rcpt_resp = smtp_cmd($socket, 'RCPT TO:<' . $r . '>', 250);
+        }
     }
 
     // DATA
     smtp_cmd($socket, 'DATA', 354);
 
-    $headers = "From: $from_name <$from_addr>\r\n";
-    $headers .= "To: <$to_email>\r\n";
-    $headers .= "Reply-To: $email\r\n";
-    $headers .= "Subject: $subject\r\n";
+    $headers = '';
+    $headers .= "From: " . FROM_NAME . " <" . FROM_ADDR . ">\r\n";
+    $headers .= "To: <" . $to_email . ">\r\n";
+    $headers .= "Reply-To: " . $email . "\r\n";
+    $headers .= "Subject: " . $subject . "\r\n";
     $headers .= "MIME-Version: 1.0\r\n";
     $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
     $headers .= "Content-Transfer-Encoding: 8bit\r\n";
@@ -115,25 +120,42 @@ try {
 
     $full_msg = $headers . $body . "\r\n.\r\n";
     fwrite($socket, $full_msg);
-    fgets($socket, 512);
+    $data_resp = '';
+    while (!feof($socket) && ($line = fgets($socket, 512))) {
+        $data_resp .= $line;
+        if (isset($line[3]) && $line[3] === ' ') break;
+    }
 
-    // QUIT
     smtp_cmd($socket, 'QUIT', 221);
     fclose($socket);
     $success = true;
+
 } catch (Exception $e) {
     $error_msg = $e->getMessage();
-    // Fallback to mb_send_mail
-    $headers_fb = "From: $from_name <$from_addr>\r\nReply-To: $email\r\nMIME-Version: 1.0\r\nContent-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: 8bit\r\nX-Mailer: BLUESTAR Contact Form";
+    // Fallback: log error and try PHP mail()
+    $fallback_body = "【SMTP失败 - 使用mail()兜底】\n错误: " . $error_msg . "\n\n" . $body;
+    $fallback_headers = "From: " . FROM_NAME . " <" . FROM_ADDR . ">\r\n";
+    $fallback_headers .= "Reply-To: " . $email . "\r\n";
+    $fallback_headers .= "MIME-Version: 1.0\r\n";
+    $fallback_headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
+    $fallback_headers .= "Content-Transfer-Encoding: 8bit\r\n";
+    $fallback_headers .= "X-Mailer: BLUESTAR Contact Form";
+
     foreach ($recipients as $r) {
         $r = trim($r);
-        if (!empty($r)) @mb_send_mail($r, $subject, $body, $headers_fb);
+        if (!empty($r)) {
+            if (function_exists('mb_send_mail')) {
+                @mb_send_mail($r, $subject . ' [Fallback]', $fallback_body, $fallback_headers);
+            } else {
+                @mail($r, $subject . ' [Fallback]', $fallback_body, $fallback_headers);
+            }
+        }
     }
-    $success = true;
+    $success = true; // Consider it sent even via fallback
 }
 
 if ($success) {
-    echo json_encode(['status'=>'success','message'=>'邮件已成功发送！我们将尽快与您联系。']);
+    echo json_encode(['status' => 'success', 'message' => '邮件已成功发送！我们将尽快与您联系。']);
 } else {
-    echo json_encode(['status'=>'error','message'=>'邮件发送失败：' . $error_msg]);
+    echo json_encode(['status' => 'error', 'message' => '邮件发送失败：' . $error_msg]);
 }

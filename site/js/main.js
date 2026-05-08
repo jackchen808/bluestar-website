@@ -105,7 +105,9 @@ document.addEventListener('DOMContentLoaded', function() {
         to_email: contactForm.getAttribute('data-email') || 'info@bl-star.cloud'
       };
 
-      fetch('/api/contact.php', {
+      var apiUrl = window.location.hostname.indexOf('github.io') === -1 ? 'api/contact.php' : 'https://bl-star.co.jp/api/contact.php';
+
+      fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -120,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       })
       .catch(function() {
-        showNotification('✗ 网络错误，请稍后重试', 'error');
+        showNotification('✗ 发送失败，请直接发送邮件至 info@bl-star.cloud', 'error');
       })
       .finally(function() {
         submitBtn.innerHTML = origText;
@@ -194,7 +196,9 @@ document.addEventListener('DOMContentLoaded', function() {
           position: positionName
         };
 
-        fetch('/api/contact.php', {
+        var apiUrl = window.location.hostname.indexOf('github.io') === -1 ? 'api/contact.php' : 'https://bl-star.co.jp/api/contact.php';
+
+        fetch(apiUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
