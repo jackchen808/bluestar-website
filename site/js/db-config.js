@@ -27,7 +27,7 @@
  *  IMAP:  imap.lolipop.jp:993 (SSL)
  *  SMTP:  smtp.lolipop.jp:465 (SSL)
  *
- *  メールアドレス: info@bl-star.cloud
+ *  メールアドレス: info@bl-star.co.jp
  *  メールアドレス: idc_info@bl-star.co.jp
  *
  * ================================================

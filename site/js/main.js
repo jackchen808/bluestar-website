@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
         service: document.getElementById('service').value,
         message: document.getElementById('message').value,
         type: 'inquiry',
-        to_email: contactForm.getAttribute('data-email') || 'info@bl-star.cloud'
+        to_email: contactForm.getAttribute('data-email') || 'info@bl-star.co.jp'
       };
 
       fetch('api/contact.php', {
@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       })
       .catch(function() {
-        showNotification('✗ 发送失败，请直接发送邮件至 info@bl-star.cloud', 'error');
+        showNotification('✗ 发送失败，请直接发送邮件至 info@bl-star.co.jp', 'error');
       })
       .finally(function() {
         submitBtn.innerHTML = origText;
@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function() {
       var card = this.closest('.position-card');
       var positionName = card ? card.querySelector('h3').textContent.trim() : '未指定职位';
       var isJapanese = window.location.pathname.indexOf('/ja/') === 0;
-      var recipient = isJapanese ? 'idc_info@bl-star.co.jp' : 'info@bl-star.cloud';
+      var recipient = isJapanese ? 'idc_info@bl-star.co.jp' : 'info@bl-star.co.jp';
 
       // create modal
       var overlay = document.createElement('div');

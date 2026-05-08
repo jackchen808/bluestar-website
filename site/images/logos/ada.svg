@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="80" viewBox="0 0 200 80">
+  <rect width="200" height="80" rx="12" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+  <text x="100" y="40" text-anchor="middle" fill="#0D47A1" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="bold" dominant-baseline="middle">ADA</text>
+  <text x="100" y="60" text-anchor="middle" fill="#94a3b8" font-family="Arial,Helvetica,sans-serif" font-size="10" dominant-baseline="middle">Infrastructure</text>
+</svg>

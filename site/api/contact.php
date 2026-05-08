@@ -24,7 +24,7 @@ $phone   = trim($input['phone'] ?? '');
 $service = trim($input['service'] ?? '');
 $message = trim($input['message'] ?? '');
 $type    = trim($input['type'] ?? 'inquiry');
-$to_email = trim($input['to_email'] ?? 'info@bl-star.cloud');
+$to_email = trim($input['to_email'] ?? 'info@bl-star.co.jp');
 
 if (!$name || !$email || !$message) {
     echo json_encode(['status'=>'error','message'=>'必須項目（名前・メールアドレス・お問い合わせ内容）を入力してください']);
@@ -71,7 +71,7 @@ $headers .= "Content-Transfer-Encoding: 8bit\r\n";
 $headers .= "X-Mailer: BLUESTAR Contact Form\r\n";
 
 $recipients = [$to_email];
-$bcc = ($to_email === 'idc_info@bl-star.co.jp') ? 'info@bl-star.cloud' : 'idc_info@bl-star.co.jp';
+$bcc = ($to_email === 'idc_info@bl-star.co.jp') ? 'info@bl-star.co.jp' : 'idc_info@bl-star.co.jp';
 if ($bcc) $recipients[] = $bcc;
 
 $success = true;
@@ -133,6 +133,6 @@ if ($sent_count > 0) {
     if ($success) {
         echo json_encode(['status' => 'success', 'message' => 'お問い合わせを受け付けました。']);
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'メール送信に失敗しました。お手数ですが info@bl-star.cloud まで直接ご連絡ください。']);
+        echo json_encode(['status' => 'error', 'message' => 'メール送信に失敗しました。お手数ですが info@bl-star.co.jp まで直接ご連絡ください。']);
     }
 }
