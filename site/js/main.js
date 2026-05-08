@@ -105,9 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
         to_email: contactForm.getAttribute('data-email') || 'info@bl-star.cloud'
       };
 
-      var apiUrl = window.location.hostname.indexOf('github.io') === -1 ? 'api/contact.php' : 'https://bl-star.co.jp/api/contact.php';
-
-      fetch(apiUrl, {
+      fetch('api/contact.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -196,9 +194,7 @@ document.addEventListener('DOMContentLoaded', function() {
           position: positionName
         };
 
-        var apiUrl = window.location.hostname.indexOf('github.io') === -1 ? 'api/contact.php' : 'https://bl-star.co.jp/api/contact.php';
-
-        fetch(apiUrl, {
+        fetch('api/contact.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)

@@ -1,8 +1,10 @@
 <?php
 /**
- * BLUESTAR Contact Form - PHP SMTP Sender
- * Connects to smtp.lolipop.jp:465 via SSL.
- * AUTH LOGIN with idc_info@bl-star.co.jp
+ * BLUESTAR Contact Form - メール送信 (lolipop 最適化版)
+ * 
+ * 推奨: lolipop サーバー上で動作させる
+ * 方式1: PHP mb_send_mail() - lolipop のデフォルトSMTPリレーを使う
+ * 方式2: SMTP 直接接続 (stream_socket_client + STARTTLS)
  */
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
@@ -25,137 +27,112 @@ $type    = trim($input['type'] ?? 'inquiry');
 $to_email = trim($input['to_email'] ?? 'info@bl-star.cloud');
 
 if (!$name || !$email || !$message) {
-    echo json_encode(['status'=>'error','message'=>'姓名、邮箱、内容为必填项']);
+    echo json_encode(['status'=>'error','message'=>'必須項目（名前・メールアドレス・お問い合わせ内容）を入力してください']);
     exit;
 }
 
-$subject = ($type === 'apply')
-    ? '[BLUESTAR 应聘] ' . $name . ($company ? ' - ' . $company : '')
-    : '[BLUESTAR 咨询] ' . $company . ' - ' . $name;
+$is_jp = (strpos($to_email, 'idc_info') !== false);
 
-$body = "■ 咨询来源：BLUESTAR 官网\n";
-$body .= "■ 类型：" . ($type === 'apply' ? '应聘申请' : '业务咨询') . "\n";
-$body .= "■ 提交时间：" . date('Y-m-d H:i:s') . "\n\n";
-$body .= "━━━ 客户信息 ━━━\n";
-$body .= "姓名：" . $name . "\n";
-$body .= "公司：" . $company . "\n";
-$body .= "邮箱：" . $email . "\n";
-$body .= "电话：" . $phone . "\n";
-$body .= "服务需求：" . $service . "\n\n";
-$body .= "━━━ 咨询内容 ━━━\n";
-$body .= $message . "\n\n";
-$body .= "━━━━━━━━━━━━━━\n";
-$body .= "本邮件由 BLUESTAR 官网联系表单自动发送\n";
+$subject = '';
+if ($type === 'apply') {
+    $subject = '【BLUESTAR 応募】' . $name;
+} else {
+    $subject = '【BLUESTAR お問い合わせ】' . ($company ? $company . ' - ' : '') . $name;
+}
+
+$body = "━━━ BLUESTAR お問い合わせフォーム ━━━\n";
+$body .= "種別：" . ($type === 'apply' ? '応募申請' : '業務問い合わせ') . "\n";
+$body .= "送信日時：" . date('Y-m-d H:i:s') . " (日本時間)\n\n";
+$body .= "◆ お客様情報\n";
+$body .= "お名前：" . $name . "\n";
+$body .= "会社名：" . $company . "\n";
+$body .= "メール：" . $email . "\n";
+$body .= "電話番号：" . $phone . "\n";
+$body .= "ご用件：" . $service . "\n\n";
+$body .= "◆ お問い合わせ内容\n" . $message . "\n\n";
+$body .= "─────────────────────────\n";
+$body .= "本メールは BLUESTAR 公式サイトお問い合わせフォームより自動送信されています。\n";
 $body .= "ブルースター株式会社 (BlueStar Co.,Ltd.)\n";
 $body .= "〒169-0075 東京都新宿区高田馬場1-31-8\n";
 $body .= "TEL: 03-6824-5796\n";
 
-// === SMTP Configuration ===
-define('SMTP_HOST', 'smtp.lolipop.jp');
-define('SMTP_PORT', 465);
-define('SMTP_USER', 'idc_info@bl-star.co.jp');
-define('SMTP_PASS', 'Imku1324Imku1324_');
-define('FROM_ADDR', 'idc_info@bl-star.co.jp');
-define('FROM_NAME', 'BLUESTAR 官网');
+// ====================
+// 方式1: mb_send_mail (lolipop で最も安定)
+// ====================
+$from_addr = 'idc_info@bl-star.co.jp';
+$from_name = 'BLUESTAR お問い合わせフォーム';
 
-$bcc_addr = ($to_email === 'idc_info@bl-star.co.jp') ? 'info@bl-star.cloud' : 'idc_info@bl-star.co.jp';
+$headers = "From: " . $from_name . " <" . $from_addr . ">\r\n";
+$headers .= "Reply-To: " . $email . "\r\n";
+$headers .= "Return-Path: " . $from_addr . "\r\n";
+$headers .= "MIME-Version: 1.0\r\n";
+$headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
+$headers .= "Content-Transfer-Encoding: 8bit\r\n";
+$headers .= "X-Mailer: BLUESTAR Contact Form\r\n";
+
 $recipients = [$to_email];
-if ($bcc_addr) $recipients[] = $bcc_addr;
+$bcc = ($to_email === 'idc_info@bl-star.co.jp') ? 'info@bl-star.cloud' : 'idc_info@bl-star.co.jp';
+if ($bcc) $recipients[] = $bcc;
 
-function smtp_cmd($socket, $cmd, $expected) {
-    fwrite($socket, $cmd . "\r\n");
-    $resp = '';
-    while (!feof($socket) && ($line = fgets($socket, 512))) {
-        $resp .= $line;
-        if (isset($line[3]) && $line[3] === ' ') break;
-    }
-    return $resp;
-}
-
-$success = false;
+$success = true;
 $error_msg = '';
+$sent_count = 0;
 
-try {
-    $context = stream_context_create(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false]]);
-    $socket = @stream_socket_client(
-        'ssl://' . SMTP_HOST . ':' . SMTP_PORT,
-        $errno, $errstr, 30, STREAM_CLIENT_CONNECT, $context
-    );
-    if (!$socket) throw new Exception("SMTP connection failed: $errstr ($errno)");
-
-    // Greeting
-    fgets($socket, 512);
-
-    // EHLO
-    $ehlo_resp = smtp_cmd($socket, 'EHLO bl-star.co.jp', 250);
-
-    // AUTH LOGIN
-    smtp_cmd($socket, 'AUTH LOGIN', 334);
-    smtp_cmd($socket, base64_encode(SMTP_USER), 334);
-    $auth_resp = smtp_cmd($socket, base64_encode(SMTP_PASS), 235);
-
-    // MAIL FROM
-    smtp_cmd($socket, 'MAIL FROM:<' . FROM_ADDR . '>', 250);
-
-    // RCPT TO
-    foreach ($recipients as $r) {
-        $r = trim($r);
-        if (!empty($r)) {
-            $rcpt_resp = smtp_cmd($socket, 'RCPT TO:<' . $r . '>', 250);
-        }
+foreach ($recipients as $r) {
+    $r = trim($r);
+    if (empty($r)) continue;
+    if (function_exists('mb_send_mail')) {
+        $ok = @mb_send_mail($r, $subject, $body, $headers);
+    } else {
+        $ok = @mail($r, $subject, $body, $headers);
     }
-
-    // DATA
-    smtp_cmd($socket, 'DATA', 354);
-
-    $headers = '';
-    $headers .= "From: " . FROM_NAME . " <" . FROM_ADDR . ">\r\n";
-    $headers .= "To: <" . $to_email . ">\r\n";
-    $headers .= "Reply-To: " . $email . "\r\n";
-    $headers .= "Subject: " . $subject . "\r\n";
-    $headers .= "MIME-Version: 1.0\r\n";
-    $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
-    $headers .= "Content-Transfer-Encoding: 8bit\r\n";
-    $headers .= "X-Mailer: BLUESTAR Contact Form\r\n\r\n";
-
-    $full_msg = $headers . $body . "\r\n.\r\n";
-    fwrite($socket, $full_msg);
-    $data_resp = '';
-    while (!feof($socket) && ($line = fgets($socket, 512))) {
-        $data_resp .= $line;
-        if (isset($line[3]) && $line[3] === ' ') break;
+    if ($ok) {
+        $sent_count++;
+    } else {
+        $error_msg .= 'Failed to send to ' . $r . '; ';
     }
-
-    smtp_cmd($socket, 'QUIT', 221);
-    fclose($socket);
-    $success = true;
-
-} catch (Exception $e) {
-    $error_msg = $e->getMessage();
-    // Fallback: log error and try PHP mail()
-    $fallback_body = "【SMTP失败 - 使用mail()兜底】\n错误: " . $error_msg . "\n\n" . $body;
-    $fallback_headers = "From: " . FROM_NAME . " <" . FROM_ADDR . ">\r\n";
-    $fallback_headers .= "Reply-To: " . $email . "\r\n";
-    $fallback_headers .= "MIME-Version: 1.0\r\n";
-    $fallback_headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
-    $fallback_headers .= "Content-Transfer-Encoding: 8bit\r\n";
-    $fallback_headers .= "X-Mailer: BLUESTAR Contact Form";
-
-    foreach ($recipients as $r) {
-        $r = trim($r);
-        if (!empty($r)) {
-            if (function_exists('mb_send_mail')) {
-                @mb_send_mail($r, $subject . ' [Fallback]', $fallback_body, $fallback_headers);
-            } else {
-                @mail($r, $subject . ' [Fallback]', $fallback_body, $fallback_headers);
-            }
-        }
-    }
-    $success = true; // Consider it sent even via fallback
 }
 
-if ($success) {
-    echo json_encode(['status' => 'success', 'message' => '邮件已成功发送！我们将尽快与您联系。']);
+if ($sent_count > 0) {
+    echo json_encode([
+        'status' => 'success',
+        'message' => 'お問い合わせを受け付けました。担当者よりご連絡いたします。'
+    ]);
 } else {
-    echo json_encode(['status' => 'error', 'message' => '邮件发送失败：' . $error_msg]);
+    // 方式2: SMTP direct fallback
+    try {
+        $context = stream_context_create(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false]]);
+        $socket = @stream_socket_client('tls://smtp.lolipop.jp:587', $errno, $errstr, 15, STREAM_CLIENT_CONNECT, $context);
+        if (!$socket) throw new Exception("Connection failed: $errstr");
+
+        fgets($socket, 512);
+        fwrite($socket, "EHLO bl-star.co.jp\r\n");
+        while (!feof($socket) && ($line = fgets($socket, 512))) {
+            if (isset($line[3]) && $line[3] === ' ') break;
+        }
+
+        fwrite($socket, "AUTH LOGIN\r\n"); fgets($socket, 512);
+        fwrite($socket, base64_encode('idc_info@bl-star.co.jp') . "\r\n"); fgets($socket, 512);
+        fwrite($socket, base64_encode('Imku1324Imku1324_') . "\r\n"); fgets($socket, 512);
+
+        foreach ($recipients as $r) {
+            $r = trim($r);
+            if (empty($r)) continue;
+            fwrite($socket, "MAIL FROM:<$from_addr>\r\n"); fgets($socket, 512);
+            fwrite($socket, "RCPT TO:<$r>\r\n"); fgets($socket, 512);
+        }
+        fwrite($socket, "DATA\r\n"); fgets($socket, 512);
+        fwrite($socket, $headers . "\r\n" . $body . "\r\n.\r\n"); fgets($socket, 512);
+        fwrite($socket, "QUIT\r\n"); fclose($socket);
+        $success = true;
+    } catch (Exception $e) {
+        $success = false;
+        $error_msg = $e->getMessage();
+    }
+
+    if ($success) {
+        echo json_encode(['status' => 'success', 'message' => 'お問い合わせを受け付けました。']);
+    } else {
+        echo json_encode(['status' => 'error', 'message' => 'メール送信に失敗しました。お手数ですが info@bl-star.cloud まで直接ご連絡ください。']);
+    }
 }
